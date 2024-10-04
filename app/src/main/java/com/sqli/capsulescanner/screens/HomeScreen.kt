@@ -2,6 +2,8 @@ package com.sqli.capsulescanner.screens
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -14,13 +16,18 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -34,10 +41,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.sqli.capsulescanner.R
 import com.sqli.capsulescanner.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -56,6 +66,24 @@ fun HomeScreen(
         },
         onScanCapsule = onScanCapsule
     )
+}
+
+fun handleCameraPermission(
+    context: Context,
+    onCheckPermission: (Boolean) -> Unit
+) {
+    when (PackageManager.PERMISSION_GRANTED) {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.CAMERA
+        ) -> {
+            onCheckPermission(false)
+        }
+
+        else -> {
+            onCheckPermission(true)
+        }
+    }
 }
 
 @Composable
@@ -77,13 +105,61 @@ fun CameraScreen(
         permissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
+
+    var showRationale by remember { mutableStateOf(false) }
+
+    if (showRationale) {
+        AlertDialog(
+            onDismissRequest = { showRationale = false },
+            title = { Text("Camera Permission Required") },
+            text = { Text("This app needs camera access to take photos.") },
+            confirmButton = {
+                Button(onClick = {
+                    showRationale = false
+                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                }) {
+                    Text("Request permission")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showRationale = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     if (hasCameraPermission) {
         CameraPreview(
             onScanCapsule = onScanCapsule,
             onImageCapture = onImageCapture
         )
     } else {
-        Text("Camera permission is required")
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Camera permission is required")
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.2f)
+                        .clickable {
+                            handleCameraPermission(
+                                context = context,
+                                onCheckPermission = {
+                                    showRationale = it
+                                })
+                        },
+                    contentScale = ContentScale.FillWidth,
+                    painter = painterResource(id = R.drawable.baseline_photo_camera_24),
+                    contentDescription = "card"
+                )
+            }
+        }
     }
 }
 
