@@ -7,7 +7,7 @@ on:
       - feature/add_workflows
 
 jobs:
-  run-tests:
+  first-run:
     runs-on: ubuntu-latest
 
     steps:    
