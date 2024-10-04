@@ -22,7 +22,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        val openAiApiKey: String = getApiKeyFromLocalProperties(rootDir) ?: ""
+        //val openAiApiKey: String = getApiKeyFromLocalProperties(rootDir) ?: ""
+        def openAiApiKey = System.getenv("OPENAI_API_KEY") ?: ""
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAiApiKey\"")
     }
 
