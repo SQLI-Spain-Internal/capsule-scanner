@@ -24,30 +24,10 @@ jobs:
           distribution: 'temurin' # O 'zulu' según tu preferencia
           java-version: '17' 
 
-      # Install Android Command Line Tools
-      - name: Download Android SDK Commandline Tools
-        run: |
-          mkdir -p "$HOME/android-sdk/cmdline-tools"
-          curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-          unzip sdk-tools.zip -d "$HOME/android-sdk/cmdline-tools"
-          mv "$HOME/android-sdk/cmdline-tools/cmdline-tools" "$HOME/android-sdk/cmdline-tools/latest"
-        shell: bash
-
-      # Setup SDK Manager in path
-      - name: Set up Android SDK environment
-        run: |
-          echo "export ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_ENV
-          echo "export PATH=$PATH:$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
-        shell: bash
-
-      # Install Android SDK
-      - name: Install Android SDK
-        run: |
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
-        shell: bash
-      
+      # Install Android SDK 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+            
       # Get API key 
       - name: Set up OpenAI API Key
         env:
