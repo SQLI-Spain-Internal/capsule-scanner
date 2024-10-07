@@ -32,11 +32,11 @@ jobs:
       - name: Build with Gradle
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: ./gradlew assembleDebug --info
+        run: ./gradlew assembleDebug 
 
-      # List folder in gradle out path
-      - name: List APK folder
-        run: |
-          echo "Listing app/build directory:"
-          ls -R app/build
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
 
