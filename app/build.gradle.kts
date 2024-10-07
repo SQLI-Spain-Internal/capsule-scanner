@@ -22,7 +22,7 @@ android {
         versionName = "1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        //val openAiApiKey: String = getApiKeyFromLocalProperties(rootDir) ?: ""
+        // Read OPENAI_API_KEY from environment variable
         def openAiApiKey = System.getenv("OPENAI_API_KEY") ?: ""
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAiApiKey\"")
     }

@@ -28,15 +28,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
             
-      # Get API key 
-      - name: Set up OpenAI API Key
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} 
-        run: echo "API key is set."          
-
-      # Compile
+      # Build with Gradle 
       - name: Build with Gradle
-        run: ./gradlew build
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: ./gradlew 
 
       # Store APK artifact
       - name: Upload APK as artifact
