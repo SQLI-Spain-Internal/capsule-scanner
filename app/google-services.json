@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "138775500237",
+    "project_id": "capsule-scanner",
+    "storage_bucket": "capsule-scanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:138775500237:android:461567110463fd88f86084",
+        "android_client_info": {
+          "package_name": "com.sqli.capsulescanner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcqJ2oS1Idw44G3gTjbPoTxmMl8--3H-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
