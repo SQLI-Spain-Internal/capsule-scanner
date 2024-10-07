@@ -23,7 +23,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // Read OPENAI_API_KEY from environment variable
-        def openAiApiKey = System.getenv("OPENAI_API_KEY") ?: ""
+        val openAiApiKey = System.getenv("OPENAI_API_KEY") ?: ""
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAiApiKey\"")
     }
 
