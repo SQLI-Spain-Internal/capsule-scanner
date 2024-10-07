@@ -1,13 +1,13 @@
 name: Android CI
 
 on:
-  push:
-    branches:
-      - feature/add_workflows
-  pull_request:
-    branches:
-      - feature/add_workflows
-
+  workflow_dispatch:
+    inputs:
+      testers:
+        description: "List of testers (separated by commas)"
+        required: true
+        default: "testers-group"
+        
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,17 +34,29 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: ./gradlew assembleDebug 
       
-      # Save APK to Github Artifacts 
+      # Find APK name and path
+      - name: Find APK file
+        id: find-apk
+        run: |
+          apk_path=$(find app/build/outputs/apk/debug/ -name "*.apk" | head -n 1)
+          echo "APK path found: $apk_path"
+          apk_name=$(basename $apk_path)
+          echo "APK name: $apk_name"
+          echo "::set-output name=apk_path::$apk_path"
+          echo "::set-output name=apk_name::$apk_name"
+
+      # Upload APK to artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
-          
+          name: ${{ steps.find-apk.outputs.apk_name }}
+          path: ${{ steps.find-apk.outputs.apk_path }}
+
+      # Upload APK to Firebase    
       - name: upload apk to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{secrets.FIREBASE_APP_ID_RELEASE}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-          file: app/build/outputs/apk/debug/app-debug.apk      
+          file: ${{ steps.find-apk.outputs.apk_path }}      
 
