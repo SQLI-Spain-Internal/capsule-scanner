@@ -56,7 +56,7 @@ jobs:
           path: ${{ steps.find-apk.outputs.apk_path }}
 
       # Upload APK to Firebase    
-      - name: upload apk to Firebase App Distribution
+      - name: Upload apk to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{secrets.FIREBASE_APP_ID_RELEASE}}
