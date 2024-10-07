@@ -34,14 +34,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: ./gradlew 
 
-      # Create folder in path
-      - name: Create APK folder
-        run: mkdir -p app/build/outputs/apk/debug/
+      # List folder in gradle out path
+      - name: List APK folder
+        run: ls -la app/build/outputs/apk/debug/
 
-      # Store APK artifact
-      - name: Upload APK as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-apk
-          path: app/build/outputs/apk/debug/CapsuleScanner-debug.apk       
-          overwrite: true 
