@@ -7,7 +7,6 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id ("io.realm.kotlin")
-    id("com.android.application")
     id("com.google.gms.google-services")
 }
 
