@@ -36,6 +36,7 @@ import com.sqli.capsulescanner.navigation.ui.replaceImageInUri
 import com.sqli.capsulescanner.screens.HomeScreen
 import com.sqli.capsulescanner.screens.ResultsScreen
 import com.sqli.capsulescanner.ui.theme.Dimens
+import com.sqli.capsulescanner.ui.theme.Grey
 import com.sqli.capsulescanner.ui.theme.MainGreen
 import com.sqli.capsulescanner.utilities.ResourceState
 import com.sqli.capsulescanner.viewmodel.MainViewModel
@@ -74,13 +75,15 @@ fun AppNavigationGraph(
                         onImageCropped = {
                             replaceImageInUri(
                                 context = context,
-                                imageBitmap =  it,
-                                targetUri = Uri.parse(imageCaptureResult))
+                                imageBitmap = it,
+                                targetUri = Uri.parse(imageCaptureResult)
+                            )
                         },
                         onFailedToLoadImage = {
 
                         },
-                        modifier = Modifier.size(300.dp)
+                        modifier = Modifier
+                            .size(300.dp)
                             .padding(all = Dimens.dp_8)
                             .weight(1f)
                     )
@@ -110,7 +113,8 @@ fun AppNavigationGraph(
                             },
                             modifier = Modifier
                                 .padding(all = Dimens.medium_padding)
-                                .background(color = MainGreen),
+                                .background(color = if(processorSelected != null) MainGreen else Grey),
+                            enabled = processorSelected != null
                         ) {
                             Text(
                                 text = stringResource(id = R.string.process),
@@ -119,7 +123,6 @@ fun AppNavigationGraph(
                             )
                         }
                     }
-
                 }
 
             })

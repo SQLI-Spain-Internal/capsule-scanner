@@ -20,7 +20,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // Read OPENAI_API_KEY from environment variable
@@ -37,6 +37,16 @@ android {
             )
         }
     }
+
+    applicationVariants.all {
+        outputs.all {
+            val versionName = versionName
+            val newFileName = "capsulescanner-${name}-${versionName}.apk"
+            this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            this.outputFileName = newFileName
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
