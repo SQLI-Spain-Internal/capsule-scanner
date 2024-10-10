@@ -52,24 +52,14 @@ class MainDataSourceImpl @Inject constructor(
                                 ),
                                 Content(
                                     image_url = null,
-                                    text = "Identify any Nespresso capsules present in the given context. If any are found, provide their details in JSON format.\n" +
-                                            " \n" +
-                                            "- Capsule Name\n" +
-                                            "\n" +
-                                            "- Flavor Profile\n" +
-                                            "\n" +
-                                            "- Intensity Level\n" +
-                                            " \n" +
-                                            "If no Nespresso capsules are identified, or if the image is not clear enough or of insufficient quality to make an identification, please return only a JSON object indicating the issue.\n" +
-                                            "\n" +
-                                            " ",
+                                    text = "Can you identify this as a nespresso capsule?, provide if there is one the response in a JSON format including properties like capsule_name, flavor, intensity and others, please just respond with a one level JSON, if there is not identifiable capsule response should contain an error in the same one level JSON ?",
                                     type = "text"
                                 )
                             ),
                             role = "user"
                         )
                     ),
-                    model = "gpt-4o"
+                    model = "chatgpt-4o-latest"
                 )
                 try {
                     val response = openAIApiService.process(openAIRequest)
