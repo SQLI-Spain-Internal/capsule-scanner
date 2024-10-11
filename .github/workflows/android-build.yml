@@ -6,10 +6,7 @@ on:
       testers:
         description: "List of testers (separated by commas)"
         required: true
-        default: "testers-group"
-  push:
-    branches:
-      - feature/add_workflows      
+        default: "testers-group"     
 
 jobs:
   build:
