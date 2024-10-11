@@ -3,7 +3,6 @@ package com.sqli.capsulescanner.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,8 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import com.sqli.capsulescanner.ui.theme.MainGreen
+import com.sqli.capsulescanner.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -45,7 +45,7 @@ fun Loader() {
                 .size(60.dp)
                 .padding(10.dp)
                 .align(Alignment.CenterHorizontally),
-            color = MainGreen
+            color = colorResource(id = R.color.orange)
         )
         Spacer(modifier = Modifier.width(16.dp))
 

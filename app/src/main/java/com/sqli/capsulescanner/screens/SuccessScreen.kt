@@ -63,11 +63,11 @@ fun SuccessScreen(
 
             },
             contentDescription = stringResource(R.string.description),
-            contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .padding(all = Dimens.dp_8)
-                .weight(1f)
-                .clip(RoundedCornerShape(16.dp))
+                .weight(0.5f)
+                .clip(RoundedCornerShape(16.dp)),
+            contentScale = ContentScale.Crop
         )
 
         ImageDataResultForm(dataResponse)
