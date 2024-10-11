@@ -6,7 +6,12 @@ on:
       testers:
         description: "List of testers (separated by commas)"
         required: true
-        default: "testers-group"     
+        default: "sqli-test-group"
+  pull_request:
+    types: [closed]      
+  push:
+    branches:
+      - develop     
 
 jobs:
   build:
@@ -58,5 +63,6 @@ jobs:
         with:
           appId: ${{secrets.FIREBASE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: sqli-test-group
           file: ${{ steps.find-apk.outputs.apk_path }}      
 
