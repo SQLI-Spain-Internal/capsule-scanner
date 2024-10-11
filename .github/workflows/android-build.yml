@@ -63,5 +63,6 @@ jobs:
         with:
           appId: ${{secrets.FIREBASE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: sqli-test-group
           file: ${{ steps.find-apk.outputs.apk_path }}      
 
