@@ -3,7 +3,7 @@ name: Android CI
 on:
   push:
     branches:
-      - feature/add_workflows      
+      - feature/add_workflows     
 
 jobs:
   build:
