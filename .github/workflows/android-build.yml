@@ -1,12 +1,9 @@
 name: Android CI
 
 on:
-  workflow_dispatch:
-    inputs:
-      testers:
-        description: "List of testers (separated by commas)"
-        required: true
-        default: "testers-group"     
+  push:
+    branches:
+      - feature/add_workflows      
 
 jobs:
   build:
