@@ -29,10 +29,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.sqli.capsulescanner.R
 import com.sqli.capsulescanner.entity.ProcessorOption
 import com.sqli.capsulescanner.navigation.ui.DialogFormProcessorSelector
 import com.sqli.capsulescanner.navigation.ui.replaceImageInUri
+import com.sqli.capsulescanner.screens.CameraScreen
 import com.sqli.capsulescanner.screens.HomeScreen
 import com.sqli.capsulescanner.screens.ResultsScreen
 import com.sqli.capsulescanner.ui.theme.Dimens
@@ -113,7 +115,7 @@ fun AppNavigationGraph(
                             },
                             modifier = Modifier
                                 .padding(all = Dimens.medium_padding)
-                                .background(color = if(processorSelected != null) MainGreen else Grey),
+                                .background(color = if (processorSelected != null) MainGreen else Grey),
                             enabled = processorSelected != null
                         ) {
                             Text(
@@ -133,6 +135,17 @@ fun AppNavigationGraph(
         composable(Routes.HOME_SCREEN) {
             HomeScreen(
                 mainViewModel = mainViewModel,
+                onItemSelected = {
+                    navController.navigate(Routes.RESULTS_SCREEN)
+                },
+                onScanCapsule = {
+                    navController.navigate(Routes.CAPTURE_IMAGE_SCREEN)
+                })
+        }
+
+        composable(Routes.CAPTURE_IMAGE_SCREEN) {
+            CameraScreen(
+                mainViewModel = mainViewModel,
                 onScanCapsule = {
                     showProcessDialog = true
                     imageCaptureResult = it
@@ -144,10 +157,10 @@ fun AppNavigationGraph(
             ResultsScreen(
                 mainViewModel = mainViewModel,
                 onBackPressClick = {
-                    navController.navigateUp()
+                    navigateWithPopUp(Routes.RESULTS_SCREEN, Routes.HOME_SCREEN)
                 },
                 onRetry = {
-                    navController.navigateUp()
+                    navigateWithPopUp(Routes.RESULTS_SCREEN, Routes.CAPTURE_IMAGE_SCREEN)
                 })
 
         }

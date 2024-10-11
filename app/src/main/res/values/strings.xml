@@ -14,4 +14,7 @@
     <string name="network_error">Network error</string>
     <string name="processor_selected">"Processor selected: %s"</string>
     <string name="description">Captured image</string>
+    <string name="no_history">No history yet \n please start scanning capsules</string>
+    <string name="your_history">Your scan history</string>
+    <string name="processing_completed">Processing completed</string>
 </resources>

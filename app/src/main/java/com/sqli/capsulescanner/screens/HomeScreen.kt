@@ -1,285 +1,237 @@
 package com.sqli.capsulescanner.screens
 
-import android.Manifest
-import android.content.ContentValues
-import android.content.Context
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
-import android.view.ViewGroup
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberAsyncImagePainter
 import com.sqli.capsulescanner.R
+import com.sqli.capsulescanner.entity.DataResponse
+import com.sqli.capsulescanner.ui.theme.Dimens
+import com.sqli.capsulescanner.ui.theme.OrangeRed
+import com.sqli.capsulescanner.utilities.ResourceState
 import com.sqli.capsulescanner.viewmodel.MainViewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import org.json.JSONObject
 
 @ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(
     mainViewModel: MainViewModel,
-    onScanCapsule: (String) -> Unit,
+    onItemSelected: () -> Unit,
+    onScanCapsule: () -> Unit,
 ) {
-    CameraScreen(
-        onImageCapture = { uri ->
-            mainViewModel.setImageCapture(uri)
-        },
-        onScanCapsule = onScanCapsule
+    val history = mainViewModel.history.collectAsStateWithLifecycle()
+    HomeScreen(
+        history = history.value,
+        onScanCapsule = onScanCapsule,
+        onItemSelected = {
+            mainViewModel.setData(ResourceState.Success(it))
+            onItemSelected()
+        }
     )
 }
 
-fun handleCameraPermission(
-    context: Context,
-    onCheckPermission: (Boolean) -> Unit
-) {
-    when (PackageManager.PERMISSION_GRANTED) {
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.CAMERA
-        ) -> {
-            onCheckPermission(false)
-        }
-
-        else -> {
-            onCheckPermission(true)
-        }
-    }
-}
-
 @Composable
-fun CameraScreen(
-    onImageCapture: (Uri) -> Unit,
-    onScanCapsule: (String) -> Unit,
+fun HomeScreen(
+    history: MutableList<DataResponse>,
+    onItemSelected: (DataResponse) -> Unit,
+    onScanCapsule: () -> Unit,
 ) {
     val context = LocalContext.current
-    var hasCameraPermission by remember { mutableStateOf(false) }
 
-    // Check if the camera permission is granted
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        hasCameraPermission = isGranted
-    }
-
-    LaunchedEffect(Unit) {
-        permissionLauncher.launch(Manifest.permission.CAMERA)
-    }
-
-
-    var showRationale by remember { mutableStateOf(false) }
-
-    if (showRationale) {
-        AlertDialog(
-            onDismissRequest = { showRationale = false },
-            title = { Text("Camera Permission Required") },
-            text = { Text("This app needs camera access to take photos.") },
-            confirmButton = {
-                Button(onClick = {
-                    showRationale = false
-                    permissionLauncher.launch(Manifest.permission.CAMERA)
-                }) {
-                    Text("Request permission")
-                }
-            },
-            dismissButton = {
-                Button(onClick = { showRationale = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
-    }
-
-    if (hasCameraPermission) {
-        CameraPreview(
-            onScanCapsule = onScanCapsule,
-            onImageCapture = onImageCapture
-        )
-    } else {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Camera permission is required")
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth(fraction = 0.2f)
-                        .clickable {
-                            handleCameraPermission(
-                                context = context,
-                                onCheckPermission = {
-                                    showRationale = it
-                                })
-                        },
-                    contentScale = ContentScale.FillWidth,
-                    painter = painterResource(id = R.drawable.baseline_photo_camera_24),
-                    contentDescription = "card"
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun CameraPreview(
-    onImageCapture: (Uri) -> Unit,
-    onScanCapsule: (String) -> Unit,
-) {
-    val context = LocalContext.current
-    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
-    var previewView: PreviewView? = null
-    val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
-    var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
     ) {
-        AndroidView(
-            factory = { ctx ->
-                previewView = PreviewView(ctx)
-                previewView!!.apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
+        if (history.isEmpty()) {
+            Text(
+                text = stringResource(id = R.string.no_history),
+                modifier =
+                Modifier
+                    .align(alignment = Alignment.TopCenter)
+                    .padding(top = 100.dp),
+                textAlign = TextAlign.Center,
+                fontSize = 24.sp,
+                fontFamily = FontFamily.Monospace
+            )
+            Image(
+                modifier = Modifier
+                    .padding(all = 20.dp)
+                    .fillMaxWidth(fraction = 0.8f)
+                    .clip(shape = CircleShape)
+                    .alpha(alpha = 0.5f)
+                    .align(alignment = Alignment.Center),
+                contentScale = ContentScale.FillWidth,
+                painter = painterResource(id = R.drawable.capsules),
+                contentDescription = "card"
+            )
+
+            val infiniteTransition = rememberInfiniteTransition(label = "Arrow")
+            val animatedOffset by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = 20f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                ), label = ""
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.balck_arrow),
+                contentDescription = "Arrow",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .scale(1.5f)
+                    .offset(y = animatedOffset.dp)
+                    .rotate(-150.0f)
+            )
+        } else {
+            LazyColumn {
+                itemsIndexed(history) { index, item ->
+                    if (index == 0) {
+                        Text(
+                            text = stringResource(id = R.string.your_history),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(all = 20.dp)
+                                .align(alignment = Alignment.Center),
+                            textAlign = TextAlign.Center,
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    }
+                    ListItem(
+                        item = item,
+                        onItemSelected = {
+                            onItemSelected(item)
+                        })
                 }
-                previewView!!
-            },
-            modifier = Modifier.fillMaxSize(1f),
-            update = { view ->
-                val cameraProvider = cameraProviderFuture.addListener(
-                    {
-                        val cameraProvider = cameraProviderFuture.get()
-                        val preview = androidx.camera.core.Preview.Builder().build().also {
-                            it.setSurfaceProvider(view.surfaceProvider)
-                        }
-                        imageCapture = ImageCapture.Builder().build()
-                        val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                        try {
-                            cameraProvider.unbindAll()
-
-                            cameraProvider.bindToLifecycle(
-                                context as ComponentActivity,
-                                cameraSelector,
-                                preview,
-                                imageCapture
-                            )
-                        } catch (exc: Exception) {
-                            exc.printStackTrace()
-                        }
-
-                    }, ContextCompat.getMainExecutor(context)
-                )
-
             }
-        )
-        Button(
+        }
+
+        FloatingActionButton(
             onClick = {
-                imageCapture?.let {
-                    captureImage(
-                        context = context, it, cameraExecutor,
-                        onImageCapture = onImageCapture,
-                        onScanCapsule = onScanCapsule
-                    )
-                }
+                onScanCapsule()
             },
             modifier = Modifier
-                .align(alignment = Alignment.BottomCenter)
-                .absolutePadding(bottom = 16.dp)
-                .size(80.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
-                .padding(2.dp)
+                .align(Alignment.BottomEnd)
+                .padding(20.dp),
+            shape = CircleShape,
+            containerColor = colorResource(id = R.color.orange)
         ) {
+            Icon(Icons.Default.PhotoCamera, contentDescription = "Scan")
         }
     }
-
 }
 
-fun captureImage(
-    context: android.content.Context,
-    imageCapture: ImageCapture,
-    cameraExecutor: ExecutorService,
-    onImageCapture: (Uri) -> Unit,
-    onScanCapsule: (String) -> Unit,
+@Composable
+fun ListItem(
+    item: DataResponse,
+    onItemSelected: () -> Unit
 ) {
-    val name = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
-        .format(System.currentTimeMillis())
-
-    val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-        put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/CameraX-Images")
-    }
-
-    val outputOptions = ImageCapture.OutputFileOptions
-        .Builder(
-            context.contentResolver,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .background(Color.White)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable {
+                onItemSelected()
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = rememberAsyncImagePainter(model = item.localUri),
+            contentDescription = "Item Image",
+            modifier = Modifier
+                .size(64.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
         )
-        .build()
 
-    imageCapture.takePicture(
-        outputOptions,
-        cameraExecutor,
-        object : ImageCapture.OnImageSavedCallback {
-            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                val msg = "Photo saved successfully"
-                Log.d("HomeScreen.captureImage", msg)
-                onScanCapsule("${outputFileResults.savedUri}")
-                outputFileResults.savedUri?.let { onImageCapture(it) }
-            }
+        Spacer(modifier = Modifier.width(16.dp))
 
-            override fun onError(exception: ImageCaptureException) {
-                val msg = "Photo capture failed: ${exception.message}"
-                Log.e("HomeScreen.captureImage", msg, exception)
-                onScanCapsule(msg)
+        val jsonObject = JSONObject(item.content)
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(Dimens.dp_16)
+        ) {
+
+            jsonObject.keys().asSequence().take(1).forEach { key ->
+                val value = jsonObject.getString(key)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = value,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
             }
         }
-    )
+        Icon(
+            imageVector = Icons.Default.Info,
+            contentDescription = "Info",
+            modifier = Modifier
+                .padding(10.dp)
+                .clickable {
+                    onItemSelected()
+                },
+            tint = OrangeRed
+        )
+    }
 }
 

@@ -27,6 +27,14 @@ class MainViewModel @Inject constructor(
         MutableStateFlow(ResourceState.Loading)
     val dataState: StateFlow<ResourceState<DataResponse>> = _dataState
 
+
+    /**
+     * It should be store in local or backend
+     */
+    private val _history: MutableStateFlow<MutableList<DataResponse>> =
+        MutableStateFlow(mutableListOf())
+    val history: StateFlow<MutableList<DataResponse>> = _history
+
     private val _processorsState: MutableStateFlow<ResourceState<ProcessorsResponse>> =
         MutableStateFlow(
             ResourceState.Success(
@@ -76,6 +84,8 @@ class MainViewModel @Inject constructor(
                 )
                     .collectLatest { dataResponse ->
                         _dataState.value = dataResponse
+                        if (dataResponse is ResourceState.Success)
+                            _history.value.add(dataResponse.data)
                     }
             }
 
