@@ -22,9 +22,18 @@ android {
         versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // Read OPENAI_API_KEY from environment variable
-        val openAiApiKey = System.getenv("OPENAI_API_KEY") ?: ""
-        buildConfigField("String", "OPENAI_API_KEY", "\"$openAiApiKey\"")
+
+        if (System.getenv("API_KEY") != null) {
+            // Read OPENAI_API_KEY from environment variable
+            val openAiApiKey = System.getenv("OPENAI_API_KEY") ?: ""
+            buildConfigField("String", "OPENAI_API_KEY", "\"$openAiApiKey\"")
+        } else {
+            // Read OPENAI_API_KEY from local.properties
+            val openAiApiKey: String = getApiKeyFromLocalProperties(rootDir) ?: ""
+            buildConfigField("String", "OPENAI_API_KEY", "\"$openAiApiKey\"")            
+        }        
+        
+        
     }
 
     buildTypes {
