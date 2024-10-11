@@ -24,7 +24,7 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin' # O 'zulu' según tu preferencia
+          distribution: 'temurin'
           java-version: '17' 
 
       # Install Android SDK 
@@ -56,7 +56,7 @@ jobs:
           path: ${{ steps.find-apk.outputs.apk_path }}
 
       # Upload APK to Firebase    
-      - name: Upload apk to Firebase App Distribution
+      - name: Upload APK to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{secrets.FIREBASE_APP_ID}}
