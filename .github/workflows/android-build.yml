@@ -3,9 +3,9 @@ name: Android CI
 on:
   pull_request:
     types: [closed]      
-  push:
-    branches:
-      - develop     
+#  push:
+#    branches:
+#      - develop     
 
 jobs:
   build:
