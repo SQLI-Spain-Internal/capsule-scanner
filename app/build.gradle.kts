@@ -31,9 +31,19 @@ android {
             // Read OPENAI_API_KEY from local.properties
             val openAiApiKey: String = getApiKeyFromLocalProperties(rootDir) ?: ""
             buildConfigField("String", "OPENAI_API_KEY", "\"$openAiApiKey\"")            
-        }        
-        
-        
+        }
+
+        if (System.getenv("VISION_API_KEY") != null) {
+            // Read VISION_API_KEY from environment variable
+            val visionApiKey = System.getenv("VISION_API_KEY") ?: ""
+            buildConfigField("String", "VISION_API_KEY", "\"$visionApiKey\"")
+        } else {
+            // Read VISION_API_KEY from local.properties
+            val visionApiKey: String = getGoogleVisionApiKeyFromLocalProperties(rootDir) ?: ""
+            buildConfigField("String", "VISION_API_KEY", "\"$visionApiKey\"")
+        }
+
+
     }
 
     buildTypes {
@@ -147,6 +157,18 @@ fun getApiKeyFromLocalProperties(rootDir: File): String? {
             load(propertiesFile.inputStream())
         }
         properties.getProperty("OPENAI_API_KEY")
+    } else {
+        null
+    }
+}
+
+fun getGoogleVisionApiKeyFromLocalProperties(rootDir: File): String? {
+    val propertiesFile = File(rootDir, "local.properties")
+    return if (propertiesFile.exists()) {
+        val properties = Properties().apply {
+            load(propertiesFile.inputStream())
+        }
+        properties.getProperty("VISION_API_KEY")
     } else {
         null
     }

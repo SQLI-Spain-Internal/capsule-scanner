@@ -3,11 +3,11 @@ package com.sqli.capsulescanner.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,8 +36,11 @@ import org.json.JSONObject
 fun SuccessScreen(
     dataResponse: DataResponse
 ) {
+    val scrollState = rememberScrollState()
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(scrollState)
     ) {
         Text(
             text = stringResource(id = R.string.processing_completed),
@@ -65,51 +68,37 @@ fun SuccessScreen(
             contentDescription = stringResource(R.string.description),
             modifier = Modifier
                 .padding(all = Dimens.dp_8)
-                .weight(0.5f)
+                .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp)),
             contentScale = ContentScale.Crop
         )
-
         ImageDataResultForm(dataResponse)
-
     }
-
 }
 
 @Composable
 fun ImageDataResultForm(dataResponse: DataResponse) {
     val jsonObject = JSONObject(dataResponse.content)
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(Dimens.dp_16)
-    ) {
-
-        jsonObject.keys().forEach { key ->
-            val value = jsonObject.getString(key)
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = "$key:",
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontFamily = FontFamily.Monospace
-                    )
-                    Text(
-                        text = value,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
-            }
-
+    jsonObject.keys().forEach { key ->
+        val value = jsonObject.getString(key)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 8.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = "$key:",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodyLarge,
+                fontFamily = FontFamily.Monospace
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily.Monospace
+            )
         }
     }
-
 }

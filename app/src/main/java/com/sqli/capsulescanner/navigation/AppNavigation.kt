@@ -74,10 +74,10 @@ fun AppNavigationGraph(
                     Cropify(
                         uri = Uri.parse(imageCaptureResult),
                         state = state,
-                        onImageCropped = {
+                        onImageCropped = { image ->
                             replaceImageInUri(
                                 context = context,
-                                imageBitmap = it,
+                                imageBitmap = image,
                                 targetUri = Uri.parse(imageCaptureResult)
                             )
                         },

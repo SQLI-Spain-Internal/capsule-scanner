@@ -75,6 +75,7 @@ class MainViewModel @Inject constructor(
                             1 -> AppConstants.Processors.CUSTOM_PROCESSOR
                             2 -> AppConstants.Processors.LOCAL_PROCESSOR
                             3 -> AppConstants.Processors.OPEN_AI
+                            4 -> AppConstants.Processors.GOOGLE_VISION
                             else -> AppConstants.Processors.OPEN_AI //maybe not default :/
                         },
                         imageURI = it,
@@ -115,6 +116,10 @@ class MainViewModel @Inject constructor(
                                     ProcessorOption(
                                         processorId = 3,
                                         title = "Open AI"
+                                    ),
+                                    ProcessorOption(
+                                        processorId = 4,
+                                        title = "Google Vision"
                                     ),
                                 )
                             )
