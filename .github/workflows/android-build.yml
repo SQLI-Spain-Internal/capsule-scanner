@@ -1,12 +1,6 @@
 name: Android CI
 
 on:
-  workflow_dispatch:
-    inputs:
-      testers:
-        description: "List of testers (separated by commas)"
-        required: true
-        default: "sqli-test-group"
   pull_request:
     types: [closed]      
   push:
