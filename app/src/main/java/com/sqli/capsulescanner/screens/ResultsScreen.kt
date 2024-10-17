@@ -1,5 +1,6 @@
 package com.sqli.capsulescanner.screens
 
+import android.net.Uri
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,11 +31,13 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sqli.capsulescanner.R
 import com.sqli.capsulescanner.components.Loader
 import com.sqli.capsulescanner.entity.DataResponse
+import com.sqli.capsulescanner.ui.theme.AppTheme
 import com.sqli.capsulescanner.utilities.ResourceState
 import com.sqli.capsulescanner.viewmodel.MainViewModel
 
@@ -68,7 +72,7 @@ fun ResultsScreen(
 
                 is ResourceState.Error -> {
                     /**
-                     * Data Error
+                     * Data Error TBD
                      */
                     if ((selectedResult as ResourceState.Error).error == "Data error")
                         DataErrorScreen()
@@ -78,7 +82,7 @@ fun ResultsScreen(
 
                 is ResourceState.Loading -> {
                     /**
-                     * Network Error
+                     * Network Error TBD
                      */
                     Loader()
                 }
@@ -149,6 +153,28 @@ fun ExpandableFAB(
             Icon(
                 imageVector = if (!isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                 contentDescription = "Actions"
+            )
+        }
+    }
+}
+
+@ExperimentalMaterial3Api
+@Preview
+@Composable
+fun SuccessScreenPreview() {
+    AppTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
+            SuccessScreen(
+                dataResponse = DataResponse(
+                    response = "",
+                    localUri = Uri.EMPTY,
+                    content = "{\n" +
+                            "              \"name\": \"projects/capsule-scanner/locations/europe-west1/products/cap_012\",\n" +
+                            "              \"displayName\": \"Stockholm Lungo\",\n" +
+                            "              \"productCategory\": \"general-v1\",\n" +
+                            "              \"productLabels\": \"some labels\"" +
+                            "            }"
+                )
             )
         }
     }

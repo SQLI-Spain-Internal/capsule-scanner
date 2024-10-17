@@ -102,7 +102,6 @@ class MainDataSourceImpl @Inject constructor(
 
             AppConstants.Processors.OPEN_AI -> {
                 val openAIRequest = OpenAIRequest(
-
                     max_tokens = 1000,
                     messages = listOf(
                         Message(

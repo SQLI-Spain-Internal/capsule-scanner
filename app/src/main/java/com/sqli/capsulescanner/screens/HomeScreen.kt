@@ -1,5 +1,9 @@
 package com.sqli.capsulescanner.screens
 
+import android.content.ContentResolver
+import android.content.Context
+import android.net.Uri
+import androidx.annotation.AnyRes
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -31,6 +35,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,17 +54,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.sqli.capsulescanner.R
 import com.sqli.capsulescanner.entity.DataResponse
+import com.sqli.capsulescanner.ui.theme.AppTheme
 import com.sqli.capsulescanner.ui.theme.Dimens
 import com.sqli.capsulescanner.ui.theme.OrangeRed
 import com.sqli.capsulescanner.utilities.ResourceState
 import com.sqli.capsulescanner.viewmodel.MainViewModel
 import org.json.JSONObject
+import java.io.File
 
 @ExperimentalMaterial3Api
 @Composable
@@ -236,4 +244,59 @@ fun ListItem(
         )
     }
 }
+
+@ExperimentalMaterial3Api
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    AppTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
+            HomeScreen(
+                history = mutableListOf(),
+                onItemSelected = {},
+                onScanCapsule = {},
+            )
+        }
+    }
+}
+
+@ExperimentalMaterial3Api
+@Preview
+@Composable
+fun HomeScreenListPreview() {
+    AppTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
+            HomeScreen(
+                history = mutableListOf(
+                    DataResponse(
+                        response = "",
+                        localUri = Uri.EMPTY,
+                        content = "{\n" +
+                                "              \"name\": \"projects/capsule-scanner/locations/europe-west1/products/cap_012\",\n" +
+                                "              \"displayName\": \"Stockholm Lungo\",\n" +
+                                "              \"productCategory\": \"general-v1\",\n" +
+                                "              \"productLabels\": [\n" +
+                                "                {\n" +
+                                "                  \"key\": \"intensity\",\n" +
+                                "                  \"value\": \"8\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"key\": \"url\",\n" +
+                                "                  \"value\": \"https://www.nespresso.com/es/en/order/capsules/original/stockholm-lungo-coffee-capsules\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"key\": \" description \",\n" +
+                                "                  \"value\": \" Warm heritage rich & full-bodied\"\n" +
+                                "                }\n" +
+                                "              ]\n" +
+                                "            }"
+                    )
+                ),
+                onItemSelected = {},
+                onScanCapsule = {},
+            )
+        }
+    }
+}
+
 
