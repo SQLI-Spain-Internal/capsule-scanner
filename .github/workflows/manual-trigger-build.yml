@@ -27,6 +27,7 @@ jobs:
       - name: Build with Gradle
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          VISION_API_KEY: ${{ secrets.VISION_API_KEY }}
         run: ./gradlew assembleDebug 
       
       # Find APK name and path

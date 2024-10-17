@@ -23,7 +23,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        if (System.getenv("API_KEY") != null) {
+        if (System.getenv("OPENAI_API_KEY") != null) {
             // Read OPENAI_API_KEY from environment variable
             val openAiApiKey = System.getenv("OPENAI_API_KEY") ?: ""
             buildConfigField("String", "OPENAI_API_KEY", "\"$openAiApiKey\"")
@@ -42,8 +42,6 @@ android {
             val visionApiKey: String = getGoogleVisionApiKeyFromLocalProperties(rootDir) ?: ""
             buildConfigField("String", "VISION_API_KEY", "\"$visionApiKey\"")
         }
-
-
     }
 
     buildTypes {
