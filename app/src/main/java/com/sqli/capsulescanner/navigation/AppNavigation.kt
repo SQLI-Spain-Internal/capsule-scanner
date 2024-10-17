@@ -1,27 +1,30 @@
 package com.sqli.capsulescanner.navigation
 
 import android.net.Uri
-import androidx.compose.foundation.background
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,7 +32,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 import com.sqli.capsulescanner.R
 import com.sqli.capsulescanner.entity.ProcessorOption
 import com.sqli.capsulescanner.navigation.ui.DialogFormProcessorSelector
@@ -38,8 +40,6 @@ import com.sqli.capsulescanner.screens.CameraScreen
 import com.sqli.capsulescanner.screens.HomeScreen
 import com.sqli.capsulescanner.screens.ResultsScreen
 import com.sqli.capsulescanner.ui.theme.Dimens
-import com.sqli.capsulescanner.ui.theme.Grey
-import com.sqli.capsulescanner.ui.theme.MainGreen
 import com.sqli.capsulescanner.utilities.ResourceState
 import com.sqli.capsulescanner.viewmodel.MainViewModel
 import io.moyuru.cropify.Cropify
@@ -88,6 +88,7 @@ fun AppNavigationGraph(
                             .size(300.dp)
                             .padding(all = Dimens.dp_8)
                             .weight(1f)
+                            .clip(RoundedCornerShape(16.dp))
                     )
 
                     DialogFormProcessorSelector(
@@ -98,35 +99,39 @@ fun AppNavigationGraph(
                             mainViewModel.setSelectedProcessor(processorSelected)
                         }
                     )
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        TextButton(
+
+                        FloatingActionButton(
                             onClick = {
-                                showProcessDialog = false
-                                /**
-                                 * process image
-                                 */
-                                mainViewModel.setSelectedProcessor(processorSelected)
-                                mainViewModel.setData(ResourceState.Loading)
-                                mainViewModel.processImage()
-                                navController.navigate(Routes.RESULTS_SCREEN)
+                                if (processorSelected != null) {
+                                    showProcessDialog = false
+                                    /**
+                                     * process image
+                                     */
+                                    mainViewModel.setSelectedProcessor(processorSelected)
+                                    mainViewModel.setData(ResourceState.Loading)
+                                    mainViewModel.processImage()
+                                    navController.navigate(Routes.RESULTS_SCREEN)
+                                    processorSelected = null
+                                } else {
+                                    Toast.makeText(context, context.getString(R.string.select_processor), Toast.LENGTH_SHORT).show()
+                                }
                             },
                             modifier = Modifier
-                                .padding(all = Dimens.medium_padding)
-                                .background(color = if (processorSelected != null) MainGreen else Grey),
-                            enabled = processorSelected != null
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.process),
-                                color = colorResource(id = R.color.white),
-                                fontWeight = FontWeight.Bold
+                                .padding(30.dp),
+                            shape = CircleShape,
+                            containerColor = if (processorSelected != null) colorResource(id = R.color.teal_200) else colorResource(
+                                id = R.color.grey
                             )
+                        ) {
+                            Icon(Icons.Default.ChevronRight, contentDescription = "Process")
                         }
                     }
                 }
-
             })
     }
 

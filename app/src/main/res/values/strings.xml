@@ -17,4 +17,5 @@
     <string name="no_history">No history yet \n please start scanning capsules</string>
     <string name="your_history">Your scan history</string>
     <string name="processing_completed">Processing completed</string>
+    <string name="select_processor">Select processor first</string>
 </resources>
