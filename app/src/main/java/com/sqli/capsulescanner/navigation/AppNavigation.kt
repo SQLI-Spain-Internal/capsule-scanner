@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -102,8 +103,21 @@ fun AppNavigationGraph(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+
+                        FloatingActionButton(
+                            onClick = {
+                                showProcessDialog = false
+                                processorSelected = null
+                            },
+                            modifier = Modifier
+                                .padding(30.dp),
+                            shape = CircleShape,
+                            containerColor = colorResource(id = R.color.orange)
+                        ) {
+                            Icon(Icons.Default.PhotoCamera, contentDescription = "Process")
+                        }
 
                         FloatingActionButton(
                             onClick = {

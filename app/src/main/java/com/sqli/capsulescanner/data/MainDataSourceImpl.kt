@@ -80,7 +80,18 @@ class MainDataSourceImpl @Inject constructor(
                     )
                     return if (response.isSuccessful) {
                         val responseContent = response.body()?.string() ?: ""
-                        val jsonObject = ((JSONObject(responseContent).getJSONArray("responses").get(0) as JSONObject).getJSONObject("productSearchResults").getJSONArray("results").get(0) as JSONObject).getJSONObject("product").apply { remove("name") }.toString()
+                        var score: String
+                        val jsonObject = ((JSONObject(responseContent)
+                            .getJSONArray("responses").get(0) as JSONObject)
+                            .getJSONObject("productSearchResults")
+                            .getJSONArray("results").get(0) as JSONObject).apply {
+                            score = get("score").toString()
+                        }
+                            .getJSONObject("product")
+                            .apply {
+                                put("score", "${"%.2f".format(score.toDouble() * 100)}%")
+                                remove("name")
+                            }.toString()
                         val dataResponse = DataResponse(
                             response = jsonObject,
                             localUri = imageData.imageURI,
